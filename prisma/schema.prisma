@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Entity {
+  id        Int      @id @default(autoincrement())
+  timeStamp DateTime @map("time_stamp")
+  parentId  Int?     @map("parent_id")
+  parent    Entity?  @relation("Hierarchy", fields: [parentId], references: [id])
+  children  Entity[] @relation("Hierarchy")
+
+  contact   Contact?
+  addresses Address[]
+}
+
+model Contact {
+  id       Int           @id @default(autoincrement())
+  entityId Int           @unique @map("entity_id")
+  entity   Entity        @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  server   String
+  email    String
+  users    ContactUser[]
+}
+
+model ContactUser {
+  id        Int     @id @default(autoincrement())
+  contactId Int     @map("contact_id")
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  name      String
+}
+
+model Address {
+  id       Int    @id @default(autoincrement())
+  entityId Int    @map("entity_id")
+  entity   Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  address  String
+}

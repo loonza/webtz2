@@ -1,0 +1,31 @@
+#1.1
+
+SELECT dep.id
+FROM departments dep
+LEFT JOIN dep_names name ON name.department_id = dep.id
+WHERE name.id IS NULL;
+
+
+#1.2
+
+SELECT department_id AS id
+FROM dep_names
+GROUP BY department_id
+HAVING COUNT(*) >= 2;
+
+
+#1.3
+
+SELECT dep.*, dname.name
+FROM departments dep
+JOIN LATERAL (
+  SELECT name
+  FROM dep_names
+  WHERE dep_names.department_id = dep.id
+  ORDER BY id ASC
+  LIMIT 1
+) dname ON true;
+
+
+
+

@@ -1,0 +1,39 @@
+#2 также написано для prisma , ER диграмма прикреплена в проекте ( ERdb )
+
+
+#parent_id - иерархия, при удалении родителя дети не удаляются
+
+CREATE TABLE entities (
+  id SERIAL PRIMARY KEY,
+  time_stamp TIMESTAMP NOT NULL,
+  parent_id INTEGER REFERENCES entities(id) ON DELETE SET NULL
+);
+
+
+
+# связь 1к1 , удаляем обьект - удаляем контакт
+
+CREATE TABLE contacts (
+  id SERIAL PRIMARY KEY,
+  entity_id INTEGER UNIQUE REFERENCES entities(id) ON DELETE CASCADE,
+  server TEXT NOT NULL,
+  email TEXT NOT NULL
+);
+
+
+
+# связь 1 ко многим
+CREATE TABLE contact_users (
+  id SERIAL PRIMARY KEY,
+  contact_id INTEGER REFERENCES contacts(id) ON DELETE CASCADE,
+  name TEXT NOT NULL
+);
+
+
+# связь 1 ко многим
+
+CREATE TABLE addresses (
+  id SERIAL PRIMARY KEY,
+  entity_id INTEGER REFERENCES entities(id) ON DELETE CASCADE,
+  address TEXT NOT NULL
+);
